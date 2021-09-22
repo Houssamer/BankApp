@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-// TODO: Commit the changes and push into github
 
 @RestController
 @RequestMapping("/api/client")
