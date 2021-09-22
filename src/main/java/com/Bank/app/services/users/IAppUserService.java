@@ -6,11 +6,20 @@ import java.util.Collection;
 
 public interface IAppUserService {
     //retrieve data operations
-    AppUser getUser(String email);
+    //client
+    Client getClient(String email);
+    Collection<Client> getClients();
+    //employee
+    Employee getEmployee(String email);
+    Collection<Employee> getEmployees();
+    //manager
+    Manager getManager(String email);
+    Collection<Manager> getManagers();
+    //admin
+    SysAdmin getSysAdmin(String email);
+    Collection<SysAdmin> getSysAdmins();
+    //all
     Collection<AppUser> getAllUsers();
-    Collection<AppUser> getUsers();
-    Collection<AppUser> getEmployees();
-    Collection<AppUser> getManagers();
     //send data operations
     //clients
     String addClient(Client client);

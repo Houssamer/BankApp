@@ -15,7 +15,7 @@ public class Client extends AppUser {
     private AppUserRole role = AppUserRole.Client;
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Collection<Account> accounts;
-    private Boolean locked = false;
+    private Boolean locked = true;
     private Boolean enabled = false;
 
     public Client(String firstName,
@@ -38,7 +38,7 @@ public class Client extends AppUser {
     }
     @Override
     public boolean isAccountNonLocked() {
-        return locked;
+        return !locked;
     }
 
     @Override

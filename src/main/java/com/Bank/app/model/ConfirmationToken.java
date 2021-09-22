@@ -1,6 +1,7 @@
 package com.Bank.app.model;
 
 import com.Bank.app.model.user.AppUser;
+import com.Bank.app.model.user.Client;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,20 +14,22 @@ public class ConfirmationToken {
     @Column(nullable = false)
     private String token;
     @Column(nullable = false)
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
     private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
     @ManyToOne
-    @JoinColumn(nullable = false, name="app_user_id")
-    private AppUser appUser;
+    @JoinColumn(nullable = false, name="client_id")
+    private Client client;
 
     public ConfirmationToken(String token,
+                             LocalDateTime createdAt,
                              LocalDateTime expiresAt,
-                             LocalDateTime confirmedAt,
-                             AppUser appUser) {
+                             Client client) {
         this.token = token;
+        this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.confirmedAt = confirmedAt;
-        this.appUser = appUser;
+        this.client = client;
     }
 
     public ConfirmationToken() {
@@ -65,11 +68,11 @@ public class ConfirmationToken {
         this.confirmedAt = confirmedAt;
     }
 
-    public AppUser getAppUser() {
-        return appUser;
+    public Client getClient() {
+        return client;
     }
 
-    public void setAppUser(AppUser appUser) {
-        this.appUser = appUser;
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

@@ -48,7 +48,7 @@ public class RegistrationService implements IRegistrationService {
             throw new IllegalStateException("token expired");
         }
         appUserService.unlockClient(
-                confirmationToken.getAppUser().getUsername()
+                confirmationToken.getClient().getUsername()
         );
         return "confirmed";
     }

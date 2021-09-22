@@ -5,6 +5,7 @@ import com.Bank.app.model.user.*;
 import com.Bank.app.repositories.AppUserRepository;
 import com.Bank.app.repositories.ConfirmationTokenRepository;
 import com.Bank.app.services.registration.email.EmailSender;
+import com.Bank.app.services.registration.token.ConfirmationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,57 +18,100 @@ import java.util.UUID;
 @Service
 @Transactional
 public class AppUserService implements IAppUserService{
-    private final AppUserRepository appUserRepository;
+    private final AppUserRepository<AppUser> appUserRepository;
+    private final AppUserRepository<Client> clientRepository;
+    private final AppUserRepository<Employee> employeeRepository;
+    private final AppUserRepository<Manager> managerRepository;
+    private final AppUserRepository<SysAdmin> sysAdminRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final ConfirmationTokenService confirmationTokenService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final EmailSender emailSender;
 
     @Autowired
-    public AppUserService(AppUserRepository appUserRepository,
+    public AppUserService(AppUserRepository<AppUser> appUserRepository,
+                          AppUserRepository<Client> clientRepository,
+                          AppUserRepository<Employee> employeeRepository,
+                          AppUserRepository<Manager> managerRepository,
+                          AppUserRepository<SysAdmin> sysAdminRepository,
                           ConfirmationTokenRepository confirmationTokenRepository,
-                          EmailSender emailSender,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
+                          ConfirmationTokenService confirmationTokenService,
+                          BCryptPasswordEncoder bCryptPasswordEncoder,
+                          EmailSender emailSender) {
+
         this.appUserRepository = appUserRepository;
+        this.clientRepository = clientRepository;
+        this.employeeRepository = employeeRepository;
+        this.managerRepository = managerRepository;
+        this.sysAdminRepository = sysAdminRepository;
         this.confirmationTokenRepository = confirmationTokenRepository;
+        this.confirmationTokenService = confirmationTokenService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.emailSender = emailSender;
     }
 
     @Override
-    public AppUser getUser(String email) {
-        return appUserRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("No Account with email: "+email));
+    public Client getClient(String email) {
+        return clientRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Client not found"));
+    }
+
+    @Override
+    public Employee getEmployee(String email) {
+        return employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Employee not found"));
+    }
+
+    @Override
+    public Manager getManager(String email) {
+        return managerRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("Manager not found"));
+    }
+
+    @Override
+    public SysAdmin getSysAdmin(String email) {
+        return sysAdminRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("SysAdmin not found"));
     }
 
     @Override
     public Collection<AppUser> getAllUsers() {
+
         return appUserRepository.findAll();
     }
 
     @Override
-    public Collection<AppUser> getUsers() {
-        return appUserRepository.findByRole(AppUserRole.Client.name());
+    public Collection<Client> getClients() {
+
+        return clientRepository.findAll();
     }
 
     @Override
-    public Collection<AppUser> getEmployees() {
-        return appUserRepository.findByRole(AppUserRole.Employee.name());
+    public Collection<Employee> getEmployees() {
+
+        return employeeRepository.findAll();
     }
 
     @Override
-    public Collection<AppUser> getManagers() {
-        return appUserRepository.findByRole(AppUserRole.Manager.name());
+    public Collection<Manager> getManagers() {
+
+        return managerRepository.findAll();
+    }
+
+    @Override
+    public Collection<SysAdmin> getSysAdmins() {
+        return sysAdminRepository.findAll();
     }
 
     @Override
     public String addClient(Client client) {
         boolean clientExists =
-                appUserRepository.findByEmail(client.getUsername()).isPresent();
+                clientRepository.findByEmail(client.getUsername()).isPresent();
 
         if (clientExists) {
-            Client clientA = (Client)
-                    appUserRepository.findByEmail(client.getUsername()).get();
-            if (!clientA.isEnabled()) {
+            Client clientA =
+                    clientRepository.findByEmail(client.getUsername()).get();
+            if (clientA.getLocked()) {
                 String token = UUID.randomUUID().toString();
                 ConfirmationToken confirmationToken =
                         new ConfirmationToken(
@@ -76,7 +120,8 @@ public class AppUserService implements IAppUserService{
                                 LocalDateTime.now().plusMinutes(15),
                                 clientA
                         );
-                String link = "http://localhost:8080/confirm?token="+token;
+                confirmationTokenRepository.save(confirmationToken);
+                String link = "http://localhost:8080/api/client/confirm?token="+token;
                 emailSender.send(
                         client.getUsername(),
                         buildEmail(client.getFirstName(), link)
@@ -90,7 +135,7 @@ public class AppUserService implements IAppUserService{
         String encodedPassword =
                 bCryptPasswordEncoder.encode(client.getPassword());
         client.setPassword(encodedPassword);
-        appUserRepository.save(client);
+        clientRepository.save(client);
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken =
                 new ConfirmationToken(
@@ -101,7 +146,7 @@ public class AppUserService implements IAppUserService{
                 );
         confirmationTokenRepository.save(confirmationToken);
 
-        String link = "http://localhost:8080/api/confirm?token="+token;
+        String link = "http://localhost:8080/api/client/confirm?token="+token;
         emailSender.send(
                 client.getUsername(),
                 buildEmail(client.getFirstName(), link)
@@ -111,28 +156,29 @@ public class AppUserService implements IAppUserService{
 
     @Override
     public void deleteClient(String email) {
-        Client client = (Client) appUserRepository.findByEmail(email)
+        Client client = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
-        appUserRepository.delete(client);
+        confirmationTokenService.deleteToken(client);
+        clientRepository.delete(client);
     }
 
     @Override
     public void updateClient(String email, String password) {
-        Client client = (Client) appUserRepository.findByEmail(email)
+        Client client = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
-        if (client.getPassword()
-                .equals(bCryptPasswordEncoder.encode(password))) {
-            throw new IllegalStateException("The password is th e same as one of your previous password");
-        }
         String encodedPassword = bCryptPasswordEncoder.encode(password);
+        if (client.getPassword()
+                .equals(encodedPassword)) {
+            throw new IllegalStateException("The password is the same as one of your previous password");
+        }
         client.setPassword(encodedPassword);
-        appUserRepository.save(client);
+        clientRepository.save(client);
     }
 
     @Override
     public void addEmployee(Employee employee) {
         boolean employeeExists =
-                appUserRepository.findByEmail(employee.getUsername())
+                employeeRepository.findByEmail(employee.getUsername())
                         .isPresent();
 
         if (employeeExists) {
@@ -142,20 +188,20 @@ public class AppUserService implements IAppUserService{
         String encodedPassword =
                 bCryptPasswordEncoder.encode(employee.getPassword());
         employee.setPassword(encodedPassword);
-        appUserRepository.save(employee);
+        employeeRepository.save(employee);
     }
 
     @Override
     public void deleteEmployee(String email) {
-        Employee employee = (Employee) appUserRepository
+        Employee employee = employeeRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Employee not found"));
-        appUserRepository.delete(employee);
+        employeeRepository.delete(employee);
     }
 
     @Override
     public void updateEmployee(String email, String password) {
-        Employee employee = (Employee) appUserRepository.findByEmail(email)
+        Employee employee = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Employee not found"));
         String encodedPassword = bCryptPasswordEncoder.encode(password);
         if (employee.getPassword().equals(encodedPassword)) {
@@ -163,12 +209,12 @@ public class AppUserService implements IAppUserService{
         }
 
         employee.setPassword(encodedPassword);
-        appUserRepository.save(employee);
+        employeeRepository.save(employee);
     }
 
     @Override
     public void addManager(Manager manager) {
-        boolean managerExist = appUserRepository.findByEmail(manager.getUsername())
+        boolean managerExist = managerRepository.findByEmail(manager.getUsername())
                 .isPresent();
         if (managerExist) {
             throw new IllegalStateException("email Already taken");
@@ -176,31 +222,31 @@ public class AppUserService implements IAppUserService{
 
         String encodedPassword = bCryptPasswordEncoder.encode(manager.getPassword());
         manager.setPassword(encodedPassword);
-        appUserRepository.save(manager);
+        managerRepository.save(manager);
     }
 
     @Override
     public void deleteManager(String email) {
-        Manager manager = (Manager) appUserRepository.findByEmail(email)
+        Manager manager = managerRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Manager not found"));
-        appUserRepository.delete(manager);
+        managerRepository.delete(manager);
     }
 
     @Override
     public void updateManager(String email, String password) {
-        Manager manager = (Manager) appUserRepository.findByEmail(email)
+        Manager manager = managerRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Employee not found"));
         String encodedPassword = bCryptPasswordEncoder.encode(password);
         if (manager.getPassword().equals(encodedPassword)) {
             throw new IllegalStateException("the password is the same as one of your previous passwords");
         }
         manager.setPassword(encodedPassword);
-        appUserRepository.save(manager);
+        managerRepository.save(manager);
     }
 
     @Override
     public void addSysAdmin(SysAdmin sysAdmin) {
-        boolean AdminExist = appUserRepository
+        boolean AdminExist = sysAdminRepository
                 .findByEmail(sysAdmin.getUsername())
                 .isPresent();
         if (AdminExist) {
@@ -209,41 +255,41 @@ public class AppUserService implements IAppUserService{
 
         String encodedPassword = bCryptPasswordEncoder.encode(sysAdmin.getPassword());
         sysAdmin.setPassword(encodedPassword);
-        appUserRepository.save(sysAdmin);
+        sysAdminRepository.save(sysAdmin);
     }
 
     @Override
     public void deleteSysAdmin(String email) {
-        SysAdmin admin = (SysAdmin) appUserRepository.findByEmail(email)
+        SysAdmin admin = sysAdminRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Admin not found"));
-        appUserRepository.delete(admin);
+        sysAdminRepository.delete(admin);
     }
 
     @Override
     public void updateSysAdmin(String email, String password) {
-        SysAdmin admin = (SysAdmin) appUserRepository.findByEmail(email)
+        SysAdmin admin = sysAdminRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Admin not found"));
         String encodedPassword = bCryptPasswordEncoder.encode(password);
         if (admin.getPassword().equals(encodedPassword)) {
             throw new IllegalStateException("the password is the same as one of your previous password");
         }
         admin.setPassword(encodedPassword);
-        appUserRepository.save(admin);
+        sysAdminRepository.save(admin);
     }
 
     @Override
     public void unlockClient(String email) {
-        Client user = (Client) appUserRepository.findByEmail(email)
+        Client user = clientRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         user.setLocked(false);
-        appUserRepository.save(user);
+        clientRepository.save(user);
     }
     @Override
     public void enableClient(String email) {
-        Client client = (Client) appUserRepository.findByEmail(email)
+        Client client = (Client) clientRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         client.setEnabled(true);
-        appUserRepository.save(client);
+        clientRepository.save(client);
     }
 
     private String buildEmail(String name, String link) {

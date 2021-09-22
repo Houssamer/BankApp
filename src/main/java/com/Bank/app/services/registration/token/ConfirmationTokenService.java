@@ -1,10 +1,12 @@
 package com.Bank.app.services.registration.token;
 
 import com.Bank.app.model.ConfirmationToken;
+import com.Bank.app.model.user.Client;
 import com.Bank.app.repositories.ConfirmationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -26,5 +28,12 @@ public class ConfirmationTokenService implements IConfirmationTokenService{
     @Override
     public Optional<ConfirmationToken> getToken(String token) {
         return confirmationTokenRepository.findByToken(token);
+    }
+
+    @Override
+    public void deleteToken(Client client) {
+        Collection<ConfirmationToken> confirmationToken = confirmationTokenRepository
+                .findConfirmationTokenByClient(client);
+        confirmationTokenRepository.deleteAll(confirmationToken);
     }
 }
