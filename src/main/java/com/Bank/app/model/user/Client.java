@@ -1,6 +1,7 @@
 package com.Bank.app.model.user;
 
 import com.Bank.app.model.Account;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -13,6 +14,7 @@ import java.util.Collections;
 public class Client extends AppUser {
     @Transient
     private AppUserRole role = AppUserRole.Client;
+    @JsonManagedReference
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private Collection<Account> accounts;
     private Boolean locked = true;

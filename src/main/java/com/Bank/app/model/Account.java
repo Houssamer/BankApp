@@ -2,9 +2,12 @@ package com.Bank.app.model;
 
 import com.Bank.app.model.operations.Operations;
 import com.Bank.app.model.user.Client;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.micrometer.core.lang.Nullable;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Entity
@@ -12,20 +15,24 @@ public class Account {
     @Id
     private String number;
     private double balance;
+    private LocalDateTime createdAt;
     @ManyToOne
     @JoinColumn(name="CODE_CLIENT")
+    @JsonBackReference
     private Client client;
+    @JsonManagedReference
     @OneToMany(mappedBy = "account")
     private Collection<Operations> operations;
+
     public Account(String number,
                    double balance,
-                   Client client,
-                   Collection<Operations> operations) {
+                   LocalDateTime createdAt,
+                   Client client) {
 
         this.number = number;
         this.balance = balance;
+        this.createdAt = createdAt;
         this.client = client;
-        this.operations = operations;
     }
 
     public Account() {
@@ -62,5 +69,13 @@ public class Account {
 
     public void setOperations(Collection<Operations> operations) {
         this.operations = operations;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

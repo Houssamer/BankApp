@@ -1,6 +1,7 @@
 package com.Bank.app.controllers.users;
 
-import com.Bank.app.model.RegistrationRequest;
+import com.Bank.app.model.requests.PasswordChangeReq;
+import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.Client;
 import com.Bank.app.services.registration.RegistrationService;
 import com.Bank.app.services.users.AppUserService;
@@ -38,9 +39,9 @@ public class ClientController {
         return registrationService.confirmToken(token);
     }
 
-    @GetMapping("enable/{email}")
-    public void enableClient(@PathVariable("email") String email) {
-        appUserService.enableClient(email);
+    @GetMapping("enable")
+    public void enableClient(@RequestBody RegistrationRequest request) {
+        appUserService.enableClient(request.getEmail());
     }
 
     @PostMapping("add")
@@ -48,15 +49,14 @@ public class ClientController {
         return registrationService.register(request);
     }
 
-    @DeleteMapping("delete/{email}")
-    public void deleteClient(@PathVariable("email") String email) {
-        appUserService.deleteClient(email);
+    @DeleteMapping("delete")
+    public void deleteClient(@RequestBody RegistrationRequest request) {
+        appUserService.deleteClient(request.getEmail());
     }
 
-    @PutMapping("update/{email}")
-    public void updateClient(@PathVariable("email") String email,
-                             @RequestBody String password) {
-        appUserService.updateClient(email, password);
+    @PutMapping("update/")
+    public void updateClient(@RequestBody PasswordChangeReq req) {
+        appUserService.updateClient(req.getEmail(), req.getPassword());
     }
 
 }

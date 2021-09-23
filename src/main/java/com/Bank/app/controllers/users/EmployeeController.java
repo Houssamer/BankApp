@@ -1,5 +1,7 @@
 package com.Bank.app.controllers.users;
 
+import com.Bank.app.model.requests.PasswordChangeReq;
+import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.Employee;
 import com.Bank.app.services.users.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,14 @@ public class EmployeeController {
         appUserService.addEmployee(employee);
     }
 
-    @DeleteMapping("delete/{email}")
-    public void deleteEmployee(@PathVariable("email") String email) {
-        appUserService.deleteEmployee(email);
+    @DeleteMapping("delete")
+    public void deleteEmployee(@RequestBody RegistrationRequest request) {
+
+        appUserService.deleteEmployee(request.getEmail());
     }
 
-    @PutMapping("update/{email}")
-    public void updateEmployee(@PathVariable("email") String email,
-                               @RequestBody String password) {
-        appUserService.updateEmployee(email, password);
+    @PutMapping("update")
+    public void updateEmployee(@RequestBody PasswordChangeReq req) {
+        appUserService.updateEmployee(req.getEmail(), req.getPassword());
     }
 }

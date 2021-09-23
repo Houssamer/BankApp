@@ -1,5 +1,7 @@
 package com.Bank.app.controllers.users;
 
+import com.Bank.app.model.requests.PasswordChangeReq;
+import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.SysAdmin;
 import com.Bank.app.services.users.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,14 @@ public class SysAdminController {
         appUserService.addSysAdmin(sysAdmin);
     }
 
-    @DeleteMapping("delete/{email}")
-    public void deleteSysAdmin(@PathVariable("email") String email) {
-        appUserService.deleteSysAdmin(email);
+    @DeleteMapping("delete")
+    public void deleteSysAdmin(@RequestBody RegistrationRequest request) {
+
+        appUserService.deleteSysAdmin(request.getEmail());
     }
 
-    @PutMapping("update/{email}")
-    public void updateSysAdmin(@PathVariable("email") String email,
-                               @RequestBody String password) {
-        appUserService.updateSysAdmin(email, password);
+    @PutMapping("update")
+    public void updateSysAdmin(@RequestBody PasswordChangeReq req) {
+        appUserService.updateSysAdmin(req.getEmail(), req.getPassword());
     }
 }

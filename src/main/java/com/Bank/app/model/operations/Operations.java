@@ -1,6 +1,7 @@
 package com.Bank.app.model.operations;
 
 import com.Bank.app.model.Account;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public abstract class Operations {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "ACCOUNT_NUMBER")
     private Account account;

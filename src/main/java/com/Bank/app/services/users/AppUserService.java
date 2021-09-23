@@ -1,6 +1,7 @@
 package com.Bank.app.services.users;
 
 import com.Bank.app.model.ConfirmationToken;
+import com.Bank.app.model.requests.PasswordChangeReq;
 import com.Bank.app.model.user.*;
 import com.Bank.app.repositories.AppUserRepository;
 import com.Bank.app.repositories.ConfirmationTokenRepository;

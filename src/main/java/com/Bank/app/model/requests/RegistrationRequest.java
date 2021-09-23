@@ -1,4 +1,4 @@
-package com.Bank.app.model;
+package com.Bank.app.model.requests;
 
 public class RegistrationRequest {
     private final String firstName;

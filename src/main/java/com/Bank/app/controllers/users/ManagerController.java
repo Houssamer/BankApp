@@ -1,5 +1,7 @@
 package com.Bank.app.controllers.users;
 
+import com.Bank.app.model.requests.PasswordChangeReq;
+import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.Manager;
 import com.Bank.app.services.users.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,13 @@ public class ManagerController {
         appUserService.addManager(manager);
     }
 
-    @DeleteMapping("delete/{email}")
-    public void deleteManager(@PathVariable("email") String email) {
-        appUserService.deleteManager(email);
+    @DeleteMapping("delete")
+    public void deleteManager(@RequestBody RegistrationRequest request) {
+        appUserService.deleteManager(request.getEmail());
     }
 
-    @PutMapping("update/{email}")
-    public void updateManager(@PathVariable("email") String email,
-                              @RequestBody String password) {
-        appUserService.updateManager(email, password);
+    @PutMapping("update")
+    public void updateManager(@RequestBody PasswordChangeReq req) {
+        appUserService.updateManager(req.getEmail(), req.getPassword());
     }
 }

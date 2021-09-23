@@ -10,7 +10,6 @@ public interface IAccountService {
     Collection<Account> getUserAccounts(String email);
 
     //send data operations
-    void addAccount(Account account);
+    void addAccount(String email);
     void deleteAccount(String number);
-    void updateAccount(String number, Account account);
 }

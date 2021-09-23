@@ -1,7 +1,7 @@
 package com.Bank.app.services.registration;
 
 import com.Bank.app.model.ConfirmationToken;
-import com.Bank.app.model.RegistrationRequest;
+import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.Client;
 import com.Bank.app.services.registration.token.ConfirmationTokenService;
 import com.Bank.app.services.users.AppUserService;
