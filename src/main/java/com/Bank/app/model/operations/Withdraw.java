@@ -4,14 +4,16 @@ import com.Bank.app.model.Account;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 
 @Entity
 @DiscriminatorValue("W")
-public class Withdrawl extends Operations {
-    public Withdrawl(Account account) {
-        super(account);
+public class Withdraw extends Operations {
+    public Withdraw(LocalDateTime date, double amount, Account account) {
+        super(date, amount, account);
     }
-    public Withdrawl() {
+
+    public Withdraw() {
         super();
     }
 }
