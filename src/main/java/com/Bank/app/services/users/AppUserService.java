@@ -8,6 +8,9 @@ import com.Bank.app.repositories.ConfirmationTokenRepository;
 import com.Bank.app.services.registration.email.EmailSender;
 import com.Bank.app.services.registration.token.ConfirmationTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class AppUserService implements IAppUserService{
+public class AppUserService implements IAppUserService, UserDetailsService {
     private final AppUserRepository<AppUser> appUserRepository;
     private final AppUserRepository<Client> clientRepository;
     private final AppUserRepository<Employee> employeeRepository;
@@ -360,5 +363,12 @@ public class AppUserService implements IAppUserService{
                 "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
                 "\n" +
                 "</div></div>";
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+        return appUserRepository.findByEmail(username)
+                .orElseThrow(() -> new IllegalStateException("user not found"));
     }
 }

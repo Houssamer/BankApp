@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 
-//TODO: commit the changes and push to the github
 
 @RestController
 @RequestMapping("/api/operations")

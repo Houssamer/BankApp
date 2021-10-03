@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/client")
 public class ClientController {
@@ -29,9 +29,9 @@ public class ClientController {
         return appUserService.getClients();
     }
 
-    @GetMapping("{email}")
-    public Client getClient(@PathVariable("email") String email) {
-        return appUserService.getClient(email);
+    @PostMapping
+    public Client getClient(@RequestBody RegistrationRequest request) {
+        return appUserService.getClient(request.getEmail());
     }
 
     @GetMapping("confirm")

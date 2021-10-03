@@ -1,7 +1,8 @@
 package com.Bank.app.services.users;
 
-import com.Bank.app.model.requests.PasswordChangeReq;
+
 import com.Bank.app.model.user.*;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Collection;
 
