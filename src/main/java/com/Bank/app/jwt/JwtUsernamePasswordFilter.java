@@ -10,16 +10,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 
 public class JwtUsernamePasswordFilter
         extends UsernamePasswordAuthenticationFilter {
@@ -43,8 +45,7 @@ public class JwtUsernamePasswordFilter
                         loginRequest.getEmail(),
                         loginRequest.getPassword()
             );
-            Authentication authenticate = authenticationManager.authenticate(authentication);
-            return authenticate;
+            return authenticationManager.authenticate(authentication);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -55,8 +56,7 @@ public class JwtUsernamePasswordFilter
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication authResult)
-            throws IOException, ServletException {
+                                            Authentication authResult) throws IOException {
         Algorithm key = Algorithm.HMAC256("secret_bank_backend_jwt_token".getBytes());
         String token = JWT.create()
                         .withSubject(authResult.getName())
@@ -68,6 +68,10 @@ public class JwtUsernamePasswordFilter
                                         .map(GrantedAuthority::getAuthority)
                                         .collect(Collectors.toList()))
                         .sign(key);
-        response.setHeader("token", token);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("token", token);
+        response.setContentType("application/json");
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 }
