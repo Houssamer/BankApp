@@ -53,7 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/client/add")
                         .permitAll()
                     .antMatchers("/api/client/confirm")
-                        .permitAll();
+                        .permitAll()
+                    .antMatchers("/logout").permitAll();
         http
                 .csrf()
                     .disable()
@@ -73,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyAuthority(AppUserRole.Client.name())
                 .antMatchers("/api/account/*")
                     .hasAnyAuthority(AppUserRole.Employee.name())
-                .antMatchers("/api/operations/transfer", "/api/operations/withdraw")
+                .antMatchers("/api/operations/transfer", "/api/operations/withdraw", "/api/operations/deposit")
                     .hasAnyAuthority(
                             AppUserRole.Client.name())
                 .antMatchers("/api/operations/account/*")

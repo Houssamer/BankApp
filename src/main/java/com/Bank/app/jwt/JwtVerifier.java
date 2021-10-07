@@ -7,7 +7,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -43,12 +42,12 @@ public class JwtVerifier extends OncePerRequestFilter {
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String email = decodedJWT.getSubject();
                     String[] role = decodedJWT.getClaim("role").asArray(String.class);
-                    Collection<SimpleGrantedAuthority> authorithy = new ArrayList<>();
+                    Collection<SimpleGrantedAuthority> authority = new ArrayList<>();
                     stream(role).forEach(rol -> {
-                        authorithy.add(new SimpleGrantedAuthority(rol));
+                        authority.add(new SimpleGrantedAuthority(rol));
                     });
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(email,null, authorithy);
+                            new UsernamePasswordAuthenticationToken(email,null, authority);
                     SecurityContextHolder.getContext().setAuthentication((authentication));
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {

@@ -10,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 
 import javax.servlet.FilterChain;
@@ -28,10 +27,13 @@ public class JwtUsernamePasswordFilter
 
     private final AuthenticationManager authenticationManager;
 
+
     public JwtUsernamePasswordFilter(
             AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
+
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -69,9 +71,12 @@ public class JwtUsernamePasswordFilter
                                         .collect(Collectors.toList()))
                         .sign(key);
 
+
         Map<String, String> tokens = new HashMap<>();
         tokens.put("token", token);
         response.setContentType("application/json");
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
+
+
 }
