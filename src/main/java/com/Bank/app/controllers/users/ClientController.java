@@ -34,6 +34,11 @@ public class ClientController {
         return appUserService.getClient(request.getEmail());
     }
 
+    @GetMapping("/disabled")
+    public Collection<Client> getDisabledClient() {
+        return appUserService.getDisabledClients();
+    }
+
     @GetMapping("confirm")
     public String confirm(@RequestParam("token") String token) {
         return registrationService.confirmToken(token);

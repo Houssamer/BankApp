@@ -11,6 +11,7 @@ public interface IAppUserService {
     //client
     Client getClient(String email);
     Collection<Client> getClients();
+    Collection<Client> getDisabledClients();
     //employee
     Employee getEmployee(String email);
     Collection<Employee> getEmployees();

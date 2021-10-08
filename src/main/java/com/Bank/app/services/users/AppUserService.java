@@ -91,6 +91,11 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     }
 
     @Override
+    public Collection<Client> getDisabledClients() {
+        return appUserRepository.findDisabledClients();
+    }
+
+    @Override
     public Collection<Employee> getEmployees() {
 
         return employeeRepository.findAll();
