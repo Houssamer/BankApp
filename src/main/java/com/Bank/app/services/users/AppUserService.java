@@ -87,7 +87,13 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     @Override
     public Collection<Client> getClients() {
 
-        return clientRepository.findAll();
+        return clientRepository.findAllClients();
+    }
+
+    @Override
+    public Client getClientById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
     }
 
     @Override
@@ -98,7 +104,7 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     @Override
     public Collection<Employee> getEmployees() {
 
-        return employeeRepository.findAll();
+        return employeeRepository.findAllEmployees();
     }
 
     @Override

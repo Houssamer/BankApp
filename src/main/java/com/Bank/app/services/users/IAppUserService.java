@@ -12,6 +12,7 @@ public interface IAppUserService {
     Client getClient(String email);
     Collection<Client> getClients();
     Collection<Client> getDisabledClients();
+    Client getClientById(Long id);
     //employee
     Employee getEmployee(String email);
     Collection<Employee> getEmployees();

@@ -24,9 +24,9 @@ public class EmployeeController {
         return appUserService.getEmployees();
     }
 
-    @GetMapping("{email}")
-    public Employee getEmployee(@PathVariable("email") String email) {
-        return appUserService.getEmployee(email);
+    @PostMapping()
+    public Employee getEmployee(@RequestBody RegistrationRequest request) {
+        return appUserService.getEmployee(request.getEmail());
     }
 
     @PostMapping("add")

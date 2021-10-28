@@ -34,6 +34,11 @@ public class ClientController {
         return appUserService.getClient(request.getEmail());
     }
 
+    @GetMapping("/")
+    public Client getClientById(@RequestParam Long id) {
+        return appUserService.getClientById(id);
+    }
+
     @GetMapping("/disabled")
     public Collection<Client> getDisabledClient() {
         return appUserService.getDisabledClients();

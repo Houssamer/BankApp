@@ -4,6 +4,7 @@ import com.Bank.app.model.user.AppUser;
 
 
 import com.Bank.app.model.user.Client;
+import com.Bank.app.model.user.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +17,8 @@ import java.util.Optional;
     Optional<T> findByEmail(String email);
     @Query("select c from Client c where c.enabled=false")
     Collection<Client> findDisabledClients();
+    @Query("select c from Client c where c.enabled=true")
+    Collection<Client> findAllClients();
+    @Query("select e from Employee e")
+    Collection<Employee> findAllEmployees();
 }
