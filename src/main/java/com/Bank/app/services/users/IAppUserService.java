@@ -8,6 +8,7 @@ import java.util.Collection;
 
 public interface IAppUserService {
     //retrieve data operations
+    String getUserRole(String email);
     //client
     Client getClient(String email);
     Collection<Client> getClients();
@@ -16,9 +17,11 @@ public interface IAppUserService {
     //employee
     Employee getEmployee(String email);
     Collection<Employee> getEmployees();
+    Employee getEmployeeById(Long id);
     //manager
     Manager getManager(String email);
     Collection<Manager> getManagers();
+    Manager getManagerById(Long id);
     //admin
     SysAdmin getSysAdmin(String email);
     Collection<SysAdmin> getSysAdmins();
@@ -27,7 +30,7 @@ public interface IAppUserService {
     //send data operations
     //clients
     String addClient(Client client);
-    void deleteClient(String email);
+    void deleteClient(Long id);
     void updateClient(String email, String password);
     void unlockClient(String email);
     void enableClient(String email);

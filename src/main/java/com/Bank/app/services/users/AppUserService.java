@@ -55,6 +55,23 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     }
 
     @Override
+    public String getUserRole(String email) {
+        Object user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("User not Found"));
+        if (user instanceof Client) {
+            return AppUserRole.Client.name();
+        } else if (user instanceof Employee) {
+            return AppUserRole.Employee.name();
+        } else if (user instanceof Manager) {
+            return AppUserRole.Manager.name();
+        } else if (user instanceof SysAdmin) {
+            return AppUserRole.SysAdmin.name();
+        }
+
+        return "Error";
+    }
+
+    @Override
     public Client getClient(String email) {
         return clientRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("Client not found"));
@@ -93,6 +110,18 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     @Override
     public Client getClientById(Long id) {
         return clientRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+    }
+
+    @Override
+    public Employee getEmployeeById(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+    }
+
+    @Override
+    public Manager getManagerById(Long id) {
+        return managerRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
     }
 
@@ -170,8 +199,8 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     }
 
     @Override
-    public void deleteClient(String email) {
-        Client client = clientRepository.findByEmail(email)
+    public void deleteClient(Long id) {
+        Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         confirmationTokenService.deleteToken(client);
         clientRepository.delete(client);

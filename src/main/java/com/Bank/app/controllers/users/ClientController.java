@@ -34,8 +34,8 @@ public class ClientController {
         return appUserService.getClient(request.getEmail());
     }
 
-    @GetMapping("/")
-    public Client getClientById(@RequestParam Long id) {
+    @GetMapping()
+    public Client getClientById(@RequestParam("id") Long id) {
         return appUserService.getClientById(id);
     }
 
@@ -49,7 +49,7 @@ public class ClientController {
         return registrationService.confirmToken(token);
     }
 
-    @GetMapping("enable")
+    @PostMapping("enable")
     public void enableClient(@RequestBody RegistrationRequest request) {
         appUserService.enableClient(request.getEmail());
     }
@@ -60,8 +60,8 @@ public class ClientController {
     }
 
     @DeleteMapping("delete")
-    public void deleteClient(@RequestBody RegistrationRequest request) {
-        appUserService.deleteClient(request.getEmail());
+    public void deleteClient(@RequestParam("id") Long id) {
+        appUserService.deleteClient(id);
     }
 
     @PutMapping("update/")

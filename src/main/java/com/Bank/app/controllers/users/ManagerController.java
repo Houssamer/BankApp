@@ -1,5 +1,6 @@
 package com.Bank.app.controllers.users;
 
+import com.Bank.app.model.requests.LoginRequest;
 import com.Bank.app.model.requests.PasswordChangeReq;
 import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.Manager;
@@ -19,14 +20,17 @@ public class ManagerController {
         this.appUserService = appUserService;
     }
 
+    @GetMapping()
+    public Manager getManagerById(@RequestParam("id") Long id) { return appUserService.getManagerById(id);}
+
     @GetMapping("all")
     public Collection<Manager> getManagers() {
         return appUserService.getManagers();
     }
 
-    @GetMapping("{email}")
-    public Manager getManager(@PathVariable("email") String email) {
-        return appUserService.getManager(email);
+    @PostMapping()
+    public Manager getManager(@RequestBody LoginRequest request) {
+        return appUserService.getManager(request.getEmail());
     }
 
     @PostMapping("add")

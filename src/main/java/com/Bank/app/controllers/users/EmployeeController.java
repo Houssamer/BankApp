@@ -19,6 +19,9 @@ public class EmployeeController {
         this.appUserService = appUserService;
     }
 
+    @GetMapping()
+    public Employee getEmployeeById(@RequestParam("id") Long id) { return appUserService.getEmployeeById(id);}
+
     @GetMapping("/all")
     public Collection<Employee> getEmployees() {
         return appUserService.getEmployees();

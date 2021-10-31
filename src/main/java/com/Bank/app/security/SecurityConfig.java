@@ -60,6 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .disable()
                 .addFilterBefore(new JwtVerifier(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/api/role")
+                    .permitAll()
                 .antMatchers("/api/client/")
                     .hasAnyAuthority(AppUserRole.Client.name())
                 .antMatchers("/api/client/update")
@@ -67,8 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/client/*")
                     .hasAnyAuthority(AppUserRole.Employee.name())
                 .antMatchers("/api/employee/*")
-                    .permitAll()
-                    /*.hasAnyAuthority(AppUserRole.Manager.name()) */
+                    .hasAnyAuthority(AppUserRole.Manager.name())
                 .antMatchers("/api/manager/*")
                     .hasAnyAuthority(AppUserRole.SysAdmin.name())
                 .antMatchers("/api/account/add")
@@ -77,9 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyAuthority(AppUserRole.Employee.name())
                 .antMatchers("/api/operations/transfer", "/api/operations/withdraw", "/api/operations/deposit")
                     .hasAnyAuthority(
-                            AppUserRole.Client.name())
+                            AppUserRole.Client.name(), AppUserRole.Employee.name())
                 .antMatchers("/api/operations/account/*")
-                    .hasAnyAuthority(AppUserRole.Client.name())
+                    .hasAnyAuthority(AppUserRole.Client.name(), AppUserRole.Employee.name())
                 .antMatchers("/api/operations/*")
                     .hasAnyAuthority(AppUserRole.Employee.name())
                 .anyRequest()
@@ -114,6 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:3001");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         source.registerCorsConfiguration("/**", config);
