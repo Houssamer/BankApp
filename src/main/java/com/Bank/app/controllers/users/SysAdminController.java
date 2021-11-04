@@ -1,5 +1,6 @@
 package com.Bank.app.controllers.users;
 
+import com.Bank.app.model.requests.LoginRequest;
 import com.Bank.app.model.requests.PasswordChangeReq;
 import com.Bank.app.model.requests.RegistrationRequest;
 import com.Bank.app.model.user.SysAdmin;
@@ -19,14 +20,14 @@ public class SysAdminController {
         this.appUserService = appUserService;
     }
 
+    @PostMapping
+    public SysAdmin getSysAdmin(@RequestBody LoginRequest request) {
+        return appUserService.getSysAdmin(request.getEmail());
+    }
+
     @GetMapping("all")
     public Collection<SysAdmin> getSysAdmins() {
         return appUserService.getSysAdmins();
-    }
-
-    @GetMapping("{email}")
-    public SysAdmin getSysAdmin(@PathVariable("email") String email) {
-        return appUserService.getSysAdmin(email);
     }
 
     @PostMapping("add")

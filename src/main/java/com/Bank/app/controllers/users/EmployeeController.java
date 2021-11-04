@@ -38,9 +38,9 @@ public class EmployeeController {
     }
 
     @DeleteMapping("delete")
-    public void deleteEmployee(@RequestBody RegistrationRequest request) {
+    public void deleteEmployee(@RequestParam("id") Long id) {
 
-        appUserService.deleteEmployee(request.getEmail());
+        appUserService.deleteEmployee(id);
     }
 
     @PutMapping("update")

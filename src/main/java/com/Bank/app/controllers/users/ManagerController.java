@@ -39,8 +39,8 @@ public class ManagerController {
     }
 
     @DeleteMapping("delete")
-    public void deleteManager(@RequestBody RegistrationRequest request) {
-        appUserService.deleteManager(request.getEmail());
+    public void deleteManager(@RequestParam("id") Long id) {
+        appUserService.deleteManager(id);
     }
 
     @PutMapping("update")

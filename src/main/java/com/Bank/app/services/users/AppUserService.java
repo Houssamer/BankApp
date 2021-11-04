@@ -139,7 +139,7 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     @Override
     public Collection<Manager> getManagers() {
 
-        return managerRepository.findAll();
+        return managerRepository.findAllManagers();
     }
 
     @Override
@@ -236,9 +236,9 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     }
 
     @Override
-    public void deleteEmployee(String email) {
+    public void deleteEmployee(Long id) {
         Employee employee = employeeRepository
-                .findByEmail(email)
+                .findById(id)
                 .orElseThrow(() -> new IllegalStateException("Employee not found"));
         employeeRepository.delete(employee);
     }
@@ -270,8 +270,8 @@ public class AppUserService implements IAppUserService, UserDetailsService {
     }
 
     @Override
-    public void deleteManager(String email) {
-        Manager manager = managerRepository.findByEmail(email)
+    public void deleteManager(Long id) {
+        Manager manager = managerRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Manager not found"));
         managerRepository.delete(manager);
     }

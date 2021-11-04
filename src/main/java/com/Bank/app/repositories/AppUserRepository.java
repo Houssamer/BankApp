@@ -5,6 +5,7 @@ import com.Bank.app.model.user.AppUser;
 
 import com.Bank.app.model.user.Client;
 import com.Bank.app.model.user.Employee;
+import com.Bank.app.model.user.Manager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -21,4 +22,6 @@ import java.util.Optional;
     Collection<Client> findAllClients();
     @Query("select e from Employee e")
     Collection<Employee> findAllEmployees();
+    @Query("select m from Manager m")
+    Collection<Manager> findAllManagers();
 }

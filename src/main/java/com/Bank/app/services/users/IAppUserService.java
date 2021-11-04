@@ -36,11 +36,11 @@ public interface IAppUserService {
     void enableClient(String email);
     //employees
     void addEmployee(Employee employee);
-    void deleteEmployee(String email);
+    void deleteEmployee(Long id);
     void updateEmployee(String email, String password);
     //managers
     void addManager(Manager manager);
-    void deleteManager(String email);
+    void deleteManager(Long id);
     void updateManager(String email, String password);
     //SysAdmin
     void addSysAdmin(SysAdmin sysAdmin);
